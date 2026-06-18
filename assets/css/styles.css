@@ -204,6 +204,31 @@ a:hover { text-decoration: underline; }
 
 .hint { font-size: 12px; color: var(--low); margin: 10px 0 0; text-align: center; }
 
+/* ── AI 모드 ─────────────────────────── */
+.ai-box {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fbfcff;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+.ai-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.ai-toggle-label { font-size: 14px; font-weight: 600; color: var(--text); }
+.ai-toggle-label small { font-weight: 400; color: var(--text-soft); }
+.ai-panel { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border); }
+.ai-key-row { display: flex; gap: 6px; }
+.ai-key-input {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 13px;
+  font-family: "Consolas", monospace;
+}
+.ai-key-input:focus { outline: 2px solid var(--primary); border-color: var(--primary); }
+.ai-remember { margin-top: 10px; font-size: 13px; }
+.ai-note { margin: 8px 0 0; font-size: 12px; color: var(--text-soft); line-height: 1.5; }
+
 /* ── 버튼 ───────────────────────────── */
 .btn {
   font-family: inherit;
