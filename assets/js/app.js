@@ -339,6 +339,76 @@
     });
   }
 
+  // ── 테마(다크/일반) · 홈 이동 · 네비 활성 ───────────────
+  function getTheme() {
+    return document.documentElement.getAttribute("data-theme") || "light";
+  }
+  function applyThemeIcon() {
+    var btn = $("#theme-toggle");
+    if (btn) btn.textContent = getTheme() === "dark" ? "☀️" : "🌙";
+  }
+  function toggleTheme() {
+    var next = getTheme() === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    try {
+      localStorage.setItem("tc_theme", next);
+    } catch (e) {
+      /* 무시 */
+    }
+    applyThemeIcon();
+  }
+
+  function bindThemeAndNav() {
+    applyThemeIcon();
+    var toggle = $("#theme-toggle");
+    if (toggle) toggle.addEventListener("click", toggleTheme);
+
+    var brand = $("#brand-home");
+    if (brand) {
+      var goHome = function () {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      };
+      brand.addEventListener("click", goHome);
+      brand.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          goHome();
+        }
+      });
+    }
+
+    // 스크롤 위치에 따라 네비 항목 활성 표시
+    var navMap = {};
+    Array.prototype.forEach.call(document.querySelectorAll(".site-nav a[data-nav]"), function (a) {
+      navMap[a.getAttribute("data-nav")] = a;
+    });
+    var sections = ["tool", "how"]
+      .map(function (id) {
+        return document.getElementById(id);
+      })
+      .filter(Boolean);
+
+    if (window.IntersectionObserver && sections.length) {
+      var obs = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (en) {
+            if (!en.isIntersecting) return;
+            var active = navMap[en.target.id];
+            if (!active) return;
+            Object.keys(navMap).forEach(function (k) {
+              navMap[k].classList.remove("active");
+            });
+            active.classList.add("active");
+          });
+        },
+        { rootMargin: "-40% 0px -55% 0px", threshold: 0 }
+      );
+      sections.forEach(function (s) {
+        obs.observe(s);
+      });
+    }
+  }
+
   function loadSample(key) {
     var s = window.TCSamples[key];
     if (s) {
@@ -407,6 +477,7 @@
     });
 
     bindDropzone();
+    bindThemeAndNav();
     restoreKey();
     setToolbarEnabled(false);
     renderTable();
