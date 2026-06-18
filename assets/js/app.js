@@ -69,7 +69,7 @@
   }
 
   function setToolbarEnabled(on) {
-    ["#btn-csv", "#btn-md", "#btn-copy", "#btn-clear-result"].forEach(function (sel) {
+    ["#btn-xlsx", "#btn-csv", "#btn-md", "#btn-copy", "#btn-clear-result"].forEach(function (sel) {
       $(sel).disabled = !on;
     });
   }
@@ -153,6 +153,97 @@
     setToolbarEnabled(false);
   }
 
+  // ── 파일 업로드(드래그앤드롭) ─────────────────────────
+  function handleFiles(fileList) {
+    if (!fileList || !fileList.length) return;
+    var status = $("#file-status");
+    status.style.display = "block";
+    status.className = "file-status loading";
+    status.textContent = "⏳ 파일에서 내용을 추출하는 중...";
+
+    window.TCFileParser.parseFiles(fileList).then(function (res) {
+      var okList = res.results.filter(function (r) {
+        return r.ok;
+      });
+      var failList = res.results.filter(function (r) {
+        return !r.ok;
+      });
+
+      if (res.text) {
+        var cur = $("#input-prd").value.trim();
+        $("#input-prd").value = cur ? cur + "\n\n" + res.text : res.text;
+      }
+
+      var msg = "✅ " + okList.length + "개 파일 추출 완료";
+      if (failList.length) {
+        msg += " · ⚠️ 실패 " + failList.length + "개 (" + failList[0].error + ")";
+        status.className = "file-status warn";
+      } else {
+        status.className = "file-status done";
+      }
+      status.textContent = msg;
+
+      if (res.text) {
+        toast("파일에서 내용을 불러왔습니다. 자동으로 변환합니다.");
+        onGenerate();
+      } else {
+        toast("추출된 텍스트가 없습니다. 파일 내용을 확인해 주세요.");
+      }
+    }, function (err) {
+      status.className = "file-status warn";
+      status.textContent = "⚠️ 파일 처리 실패: " + ((err && err.message) || err);
+    });
+  }
+
+  function bindDropzone() {
+    var dz = $("#dropzone");
+    var fi = $("#file-input");
+    if (!dz || !fi) return;
+
+    dz.addEventListener("click", function () {
+      fi.click();
+    });
+    dz.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        fi.click();
+      }
+    });
+    fi.addEventListener("change", function () {
+      handleFiles(fi.files);
+      fi.value = ""; // 같은 파일 재선택 가능하도록 초기화
+    });
+
+    ["dragenter", "dragover"].forEach(function (ev) {
+      dz.addEventListener(ev, function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dz.classList.add("dragover");
+      });
+    });
+    ["dragleave", "dragend"].forEach(function (ev) {
+      dz.addEventListener(ev, function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dz.classList.remove("dragover");
+      });
+    });
+    dz.addEventListener("drop", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      dz.classList.remove("dragover");
+      if (e.dataTransfer && e.dataTransfer.files) handleFiles(e.dataTransfer.files);
+    });
+
+    // 페이지 전체에서 파일이 다른 곳에 드롭돼 새 창으로 열리는 것 방지
+    window.addEventListener("dragover", function (e) {
+      e.preventDefault();
+    });
+    window.addEventListener("drop", function (e) {
+      e.preventDefault();
+    });
+  }
+
   function loadSample(key) {
     var s = window.TCSamples[key];
     if (s) {
@@ -164,6 +255,14 @@
 
   function bind() {
     $("#btn-generate").addEventListener("click", onGenerate);
+    $("#btn-xlsx").addEventListener("click", function () {
+      try {
+        window.TCExport.downloadXLSX(state.cases);
+        toast("엑셀(xlsx) 파일을 내려받았습니다.");
+      } catch (e) {
+        toast((e && e.message) || "엑셀 내보내기에 실패했습니다.");
+      }
+    });
     $("#btn-csv").addEventListener("click", function () {
       window.TCExport.downloadCSV(state.cases);
     });
@@ -188,6 +287,7 @@
       }
     });
 
+    bindDropzone();
     setToolbarEnabled(false);
     renderTable();
     renderStats({ total: 0, normal: 0, exception: 0, boundary: 0 });
