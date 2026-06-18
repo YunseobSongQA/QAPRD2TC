@@ -53,6 +53,19 @@
         <button id="btn-clear-input" class="btn btn-ghost btn-sm" type="button">지우기</button>
       </div>
 
+      <!-- 파일 드래그앤드롭 영역 -->
+      <div id="dropzone" class="dropzone" tabindex="0" role="button"
+           aria-label="기획서 파일을 끌어다 놓거나 클릭하여 선택">
+        <input type="file" id="file-input" class="file-input"
+               accept=".pptx,.docx,.xlsx,.xls,.csv,.txt,.md" multiple hidden />
+        <div class="dropzone-inner">
+          <span class="dropzone-icon">📎</span>
+          <p class="dropzone-title">기획서 파일을 여기로 끌어다 놓으세요</p>
+          <p class="dropzone-sub">PPT(.pptx) · 워드(.docx) · 엑셀(.xlsx/.xls) · CSV · 텍스트 지원 — 또는 클릭해서 선택</p>
+        </div>
+        <div id="file-status" class="file-status" style="display:none;"></div>
+      </div>
+
       <div class="samples">
         <span class="samples-label">예시:</span>
         <button class="btn btn-chip" type="button" data-sample="login">로그인/회원</button>
@@ -78,9 +91,10 @@
       <div class="panel-head">
         <h2>2. 생성 결과</h2>
         <div class="result-actions">
-          <button id="btn-copy" class="btn btn-ghost btn-sm" type="button" disabled>📋 복사</button>
+          <button id="btn-xlsx" class="btn btn-success btn-sm" type="button" disabled>⬇ 엑셀(xlsx)</button>
           <button id="btn-csv" class="btn btn-ghost btn-sm" type="button" disabled>⬇ CSV</button>
           <button id="btn-md" class="btn btn-ghost btn-sm" type="button" disabled>⬇ Markdown</button>
+          <button id="btn-copy" class="btn btn-ghost btn-sm" type="button" disabled>📋 복사</button>
           <button id="btn-clear-result" class="btn btn-ghost btn-sm" type="button" disabled>비우기</button>
         </div>
       </div>
@@ -146,8 +160,13 @@
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
+  <!-- 파일 파싱 라이브러리 (저장소 self-host) -->
+  <script src="assets/vendor/jszip.min.js"></script>
+  <script src="assets/vendor/xlsx.full.min.js"></script>
+
   <script src="assets/js/samples.js"></script>
   <script src="assets/js/generator.js"></script>
+  <script src="assets/js/fileparser.js"></script>
   <script src="assets/js/export.js"></script>
   <script src="assets/js/app.js"></script>
 </body>
