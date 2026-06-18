@@ -84,6 +84,38 @@
     }, 2200);
   }
 
+  // ── 공통 ──────────────────────────────────────────────
+  function getOptions() {
+    return {
+      includeNegative: $("#opt-negative").checked,
+      includeBoundary: $("#opt-boundary").checked,
+      idPrefix: ($("#opt-prefix").value || "TC").trim() || "TC"
+    };
+  }
+
+  function computeStats(cases) {
+    var s = { total: cases.length, normal: 0, exception: 0, boundary: 0 };
+    cases.forEach(function (c) {
+      if (c.type === "정상") s.normal++;
+      else if (c.type === "예외") s.exception++;
+      else if (c.type === "경계") s.boundary++;
+    });
+    return s;
+  }
+
+  function showResult(cases, label) {
+    state.cases = cases;
+    renderTable();
+    renderStats(computeStats(cases));
+    setToolbarEnabled(cases.length > 0);
+    if (cases.length) {
+      toast((label || "") + cases.length + "개의 테스트 케이스를 생성했습니다.");
+      $("#result-section").scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      toast("생성된 케이스가 없습니다. 기획서를 더 구체적으로 작성해 보세요.");
+    }
+  }
+
   // ── 이벤트 ────────────────────────────────────────────
   function onGenerate() {
     var text = $("#input-prd").value;
@@ -92,21 +124,84 @@
       $("#input-prd").focus();
       return;
     }
-    var options = {
-      includeNegative: $("#opt-negative").checked,
-      includeBoundary: $("#opt-boundary").checked,
-      idPrefix: ($("#opt-prefix").value || "TC").trim() || "TC"
-    };
-    var result = window.TCGenerator.generate(text, options);
-    state.cases = result.cases;
-    renderTable();
-    renderStats(result.stats);
-    setToolbarEnabled(result.cases.length > 0);
-    if (result.cases.length) {
-      toast(result.cases.length + "개의 테스트 케이스를 생성했습니다.");
-      $("#result-section").scrollIntoView({ behavior: "smooth", block: "start" });
-    } else {
-      toast("생성된 케이스가 없습니다. 기획서에 기능/요구사항을 더 구체적으로 작성해 보세요.");
+    if ($("#opt-ai").checked) {
+      onGenerateAI(text);
+      return;
+    }
+    var result = window.TCGenerator.generate(text, getOptions());
+    showResult(result.cases, "");
+  }
+
+  // ── AI 모드 ───────────────────────────────────────────
+  var KEY_STORE = "tcai_key";
+
+  function setGenerating(on) {
+    var btn = $("#btn-generate");
+    btn.disabled = on;
+    if (on) btn.textContent = "🤖 AI 생성 중...";
+    else syncGenerateLabel();
+  }
+
+  function onGenerateAI(text) {
+    if (!window.TCAI) {
+      toast("AI 모듈을 불러오지 못했습니다.");
+      return;
+    }
+    var key = ($("#ai-key").value || "").trim();
+    if (!key) {
+      toast("Anthropic API 키를 입력해 주세요.");
+      $("#ai-key").focus();
+      return;
+    }
+    saveKeyMaybe(key);
+    setGenerating(true);
+    toast("Claude가 테스트 케이스를 생성하는 중입니다... (최대 1분)");
+    window.TCAI.generate(text, key, getOptions()).then(
+      function (res) {
+        setGenerating(false);
+        showResult(res.cases, "🤖 AI · ");
+        if (res.truncated) {
+          toast("결과가 길어 일부가 잘렸을 수 있습니다. 기획서를 나눠 시도해 보세요.");
+        }
+      },
+      function (err) {
+        setGenerating(false);
+        toast((err && err.message) || "AI 생성에 실패했습니다.");
+      }
+    );
+  }
+
+  function syncGenerateLabel() {
+    $("#btn-generate").textContent = $("#opt-ai").checked
+      ? "🤖 AI로 테스트 케이스 변환"
+      : "🚀 테스트 케이스 변환";
+  }
+
+  function toggleAiPanel() {
+    $("#ai-panel").hidden = !$("#opt-ai").checked;
+    syncGenerateLabel();
+  }
+
+  function saveKeyMaybe(key) {
+    try {
+      if ($("#ai-remember").checked) sessionStorage.setItem(KEY_STORE, key);
+      else sessionStorage.removeItem(KEY_STORE);
+    } catch (e) {
+      /* sessionStorage 사용 불가 환경 무시 */
+    }
+  }
+
+  function restoreKey() {
+    try {
+      var k = sessionStorage.getItem(KEY_STORE);
+      if (k) {
+        $("#ai-key").value = k;
+        $("#ai-remember").checked = true;
+        $("#opt-ai").checked = true;
+        toggleAiPanel();
+      }
+    } catch (e) {
+      /* 무시 */
     }
   }
 
@@ -287,7 +382,32 @@
       }
     });
 
+    // AI 모드
+    $("#opt-ai").addEventListener("change", toggleAiPanel);
+    $("#ai-key-clear").addEventListener("click", function () {
+      $("#ai-key").value = "";
+      $("#ai-remember").checked = false;
+      try {
+        sessionStorage.removeItem(KEY_STORE);
+      } catch (e) {
+        /* 무시 */
+      }
+      $("#ai-key").focus();
+    });
+    $("#ai-remember").addEventListener("change", function () {
+      if (!$("#ai-remember").checked) {
+        try {
+          sessionStorage.removeItem(KEY_STORE);
+        } catch (e) {
+          /* 무시 */
+        }
+      } else if ($("#ai-key").value.trim()) {
+        saveKeyMaybe($("#ai-key").value.trim());
+      }
+    });
+
     bindDropzone();
+    restoreKey();
     setToolbarEnabled(false);
     renderTable();
     renderStats({ total: 0, normal: 0, exception: 0, boundary: 0 });

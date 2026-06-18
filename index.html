@@ -82,6 +82,26 @@
         <label class="opt opt-prefix">ID 접두사 <input type="text" id="opt-prefix" value="TC" maxlength="8" /></label>
       </div>
 
+      <!-- AI 모드 (Phase 2) -->
+      <div class="ai-box">
+        <label class="ai-toggle">
+          <input type="checkbox" id="opt-ai" />
+          <span class="ai-toggle-label">🤖 AI 모드 <small>(Claude로 더 정교하게 — 본인 API 키 필요)</small></span>
+        </label>
+        <div id="ai-panel" class="ai-panel" hidden>
+          <div class="ai-key-row">
+            <input type="password" id="ai-key" class="ai-key-input" autocomplete="off"
+                   placeholder="Anthropic API 키 (sk-ant-...)" />
+            <button id="ai-key-clear" class="btn btn-ghost btn-sm" type="button" title="키 지우기">✕</button>
+          </div>
+          <label class="opt ai-remember"><input type="checkbox" id="ai-remember" /> 이 세션 동안 키 기억(브라우저 sessionStorage)</label>
+          <p class="ai-note">
+            🔒 키는 <strong>이 브라우저에서 Anthropic(api.anthropic.com)으로만</strong> 전송되며 별도 서버에 저장되지 않습니다.
+            키 발급: <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>
+          </p>
+        </div>
+      </div>
+
       <button id="btn-generate" class="btn btn-primary btn-lg" type="button">🚀 테스트 케이스 변환</button>
       <p class="hint">단축키: Ctrl(⌘) + Enter</p>
     </section>
@@ -167,6 +187,7 @@
   <script src="assets/js/samples.js"></script>
   <script src="assets/js/generator.js"></script>
   <script src="assets/js/fileparser.js"></script>
+  <script src="assets/js/ai.js"></script>
   <script src="assets/js/export.js"></script>
   <script src="assets/js/app.js"></script>
 </body>
