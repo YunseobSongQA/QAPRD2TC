@@ -7,23 +7,36 @@
   <meta name="description" content="기획서(PRD)를 붙여넣으면 QA 테스트 케이스(TC)를 자동으로 생성하는 무료 웹 도구. 정적 페이지로 동작하며 CSV/Markdown 내보내기를 지원합니다." />
   <link rel="stylesheet" href="assets/css/styles.css" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✅</text></svg>" />
+  <!-- 다크/일반 모드 초기 적용 (화면 깜빡임 방지) -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("tc_theme");
+        if (!t) t = (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body>
   <!-- 헤더: 명확한 브랜드 + 한 줄 설명 -->
   <header class="site-header">
     <div class="container header-inner">
-      <div class="brand">
+      <div class="brand" id="brand-home" role="button" tabindex="0" title="홈으로 이동" aria-label="홈으로 이동">
         <span class="brand-logo">✅</span>
         <div class="brand-text">
           <strong>QA PRD&nbsp;→&nbsp;TC</strong>
           <span class="brand-sub">기획서 테스트케이스 자동 생성기</span>
         </div>
       </div>
-      <nav class="site-nav">
-        <a href="#tool">도구</a>
-        <a href="#how">사용법</a>
-        <a href="https://github.com/qass96/QAPRD2TC" target="_blank" rel="noopener">GitHub</a>
-      </nav>
+      <div class="header-actions">
+        <nav class="site-nav">
+          <a href="#tool" data-nav="tool">도구</a>
+          <a href="#how" data-nav="how">사용법</a>
+          <a href="https://github.com/qass96/QAPRD2TC" target="_blank" rel="noopener">GitHub</a>
+        </nav>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="다크/일반 모드 전환" title="다크/일반 모드 전환">🌙</button>
+      </div>
     </div>
   </header>
 
@@ -80,6 +93,26 @@
         <label class="opt"><input type="checkbox" id="opt-negative" checked /> 예외 케이스 포함</label>
         <label class="opt"><input type="checkbox" id="opt-boundary" checked /> 경계 케이스 포함</label>
         <label class="opt opt-prefix">ID 접두사 <input type="text" id="opt-prefix" value="TC" maxlength="8" /></label>
+      </div>
+
+      <!-- AI 모드 (Phase 2) -->
+      <div class="ai-box">
+        <label class="ai-toggle">
+          <input type="checkbox" id="opt-ai" />
+          <span class="ai-toggle-label">🤖 AI 모드 <small>(Claude로 더 정교하게 — 본인 API 키 필요)</small></span>
+        </label>
+        <div id="ai-panel" class="ai-panel" hidden>
+          <div class="ai-key-row">
+            <input type="password" id="ai-key" class="ai-key-input" autocomplete="off"
+                   placeholder="Anthropic API 키 (sk-ant-...)" />
+            <button id="ai-key-clear" class="btn btn-ghost btn-sm" type="button" title="키 지우기">✕</button>
+          </div>
+          <label class="opt ai-remember"><input type="checkbox" id="ai-remember" /> 이 세션 동안 키 기억(브라우저 sessionStorage)</label>
+          <p class="ai-note">
+            🔒 키는 <strong>이 브라우저에서 Anthropic(api.anthropic.com)으로만</strong> 전송되며 별도 서버에 저장되지 않습니다.
+            키 발급: <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>
+          </p>
+        </div>
       </div>
 
       <button id="btn-generate" class="btn btn-primary btn-lg" type="button">🚀 테스트 케이스 변환</button>
@@ -167,6 +200,7 @@
   <script src="assets/js/samples.js"></script>
   <script src="assets/js/generator.js"></script>
   <script src="assets/js/fileparser.js"></script>
+  <script src="assets/js/ai.js"></script>
   <script src="assets/js/export.js"></script>
   <script src="assets/js/app.js"></script>
 </body>
