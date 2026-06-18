@@ -111,16 +111,52 @@
     );
   }
 
+  // ── XLSX (SheetJS, 실제 엑셀 파일) ────────────────────
+  function buildWorkbook(cases) {
+    if (!window.XLSX) throw new Error("SheetJS(XLSX) 라이브러리를 불러오지 못했습니다.");
+    var XLSX = window.XLSX;
+    var aoa = [
+      COLUMNS.map(function (c) {
+        return c.label;
+      })
+    ];
+    cases.forEach(function (tc) {
+      aoa.push(
+        COLUMNS.map(function (c) {
+          return c.key === "steps" ? stepsToText(tc.steps, "\n") : tc[c.key] == null ? "" : String(tc[c.key]);
+        })
+      );
+    });
+    var ws = XLSX.utils.aoa_to_sheet(aoa);
+    // 보기 좋은 열 너비
+    ws["!cols"] = [
+      { wch: 10 }, { wch: 16 }, { wch: 16 }, { wch: 34 }, { wch: 26 },
+      { wch: 44 }, { wch: 34 }, { wch: 8 }, { wch: 8 }
+    ];
+    // 헤더 행 고정
+    ws["!freeze"] = { xSplit: 0, ySplit: 1 };
+    var wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "TestCases");
+    return wb;
+  }
+
+  function downloadXLSX(cases) {
+    var wb = buildWorkbook(cases);
+    window.XLSX.writeFile(wb, "testcases_" + timestamp() + ".xlsx");
+  }
+
   window.TCExport = {
     columns: COLUMNS,
     stepsToText: stepsToText,
     toCSV: toCSV,
     toMarkdown: toMarkdown,
+    buildWorkbook: buildWorkbook,
     downloadCSV: function (cases) {
       download("testcases_" + timestamp() + ".csv", toCSV(cases), "text/csv;charset=utf-8");
     },
     downloadMarkdown: function (cases) {
       download("testcases_" + timestamp() + ".md", toMarkdown(cases), "text/markdown;charset=utf-8");
-    }
+    },
+    downloadXLSX: downloadXLSX
   };
 })();

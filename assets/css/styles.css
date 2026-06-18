@@ -127,6 +127,43 @@ a:hover { text-decoration: underline; }
 }
 .panel-head h2 { font-size: 18px; }
 
+/* 드래그앤드롭 영역 */
+.dropzone {
+  border: 2px dashed #c4cdde;
+  border-radius: 12px;
+  background: #fafbfe;
+  padding: 22px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, transform 0.05s;
+  margin-bottom: 14px;
+}
+.dropzone:hover { border-color: var(--primary); background: var(--primary-soft); }
+.dropzone:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.dropzone.dragover {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  transform: scale(1.01);
+}
+.dropzone-icon { font-size: 28px; display: block; margin-bottom: 6px; }
+.dropzone-title { margin: 0; font-weight: 700; font-size: 15px; color: var(--text); }
+.dropzone-sub { margin: 4px 0 0; font-size: 12.5px; color: var(--text-soft); }
+.file-status {
+  margin-top: 12px;
+  font-size: 13px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #eef2fb;
+  color: var(--text-soft);
+}
+.file-status.loading { background: #fff7e6; color: var(--mid); }
+.file-status.done { background: #ebfbee; color: var(--normal); }
+.file-status.warn { background: #fff0f0; color: var(--high); }
+
+/* 성공(엑셀) 버튼 */
+.btn-success { background: var(--normal); color: #fff; border-color: transparent; }
+.btn-success:hover:not(:disabled) { background: #2b8a3e; }
+
 /* 예시 칩 */
 .samples { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
 .samples-label { font-size: 13px; color: var(--text-soft); }
