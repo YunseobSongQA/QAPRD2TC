@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QA PRD → TC | 기획서 테스트케이스 자동 생성기</title>
+  <meta name="description" content="기획서(PRD)를 붙여넣으면 QA 테스트 케이스(TC)를 자동으로 생성하는 무료 웹 도구. 정적 페이지로 동작하며 CSV/Markdown 내보내기를 지원합니다." />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✅</text></svg>" />
+</head>
+<body>
+  <!-- 헤더: 명확한 브랜드 + 한 줄 설명 -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <span class="brand-logo">✅</span>
+        <div class="brand-text">
+          <strong>QA PRD&nbsp;→&nbsp;TC</strong>
+          <span class="brand-sub">기획서 테스트케이스 자동 생성기</span>
+        </div>
+      </div>
+      <nav class="site-nav">
+        <a href="#tool">도구</a>
+        <a href="#how">사용법</a>
+        <a href="https://github.com/qass96/QAPRD2TC" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 히어로: 핵심 가치를 한눈에 -->
+  <section class="hero">
+    <div class="container">
+      <h1>기획서를 붙여넣으면<br /><span class="accent">테스트 케이스</span>가 만들어집니다</h1>
+      <p class="hero-desc">
+        QA 업무 효율을 위해 만든 무료 도구입니다. 기획서(PRD) 텍스트를 입력하면
+        로그인·결제·검색 등 주요 기능을 인식해 <strong>표준 QA 양식</strong>의 테스트 케이스를 자동 생성합니다.
+        설치·로그인 없이 브라우저에서 바로 동작합니다.
+      </p>
+      <div class="hero-badges">
+        <span class="chip">⚡ 즉시 동작 (정적 페이지)</span>
+        <span class="chip">📄 CSV · Markdown 내보내기</span>
+        <span class="chip">🔒 데이터는 브라우저 밖으로 나가지 않음</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 메인 작업 영역 -->
+  <main id="tool" class="container main-grid">
+    <!-- 입력 패널 -->
+    <section class="panel input-panel" aria-label="기획서 입력">
+      <div class="panel-head">
+        <h2>1. 기획서 입력</h2>
+        <button id="btn-clear-input" class="btn btn-ghost btn-sm" type="button">지우기</button>
+      </div>
+
+      <div class="samples">
+        <span class="samples-label">예시:</span>
+        <button class="btn btn-chip" type="button" data-sample="login">로그인/회원</button>
+        <button class="btn btn-chip" type="button" data-sample="shop">쇼핑몰 주문</button>
+        <button class="btn btn-chip" type="button" data-sample="board">게시판</button>
+      </div>
+
+      <textarea id="input-prd" class="prd-input" spellcheck="false"
+        placeholder="여기에 기획서 내용을 붙여넣으세요.&#10;&#10;예)&#10;## 로그인&#10;- 사용자는 이메일과 비밀번호로 로그인할 수 있어야 한다. (필수)&#10;- 비밀번호 5회 오류 시 계정을 잠근다.&#10;&#10;팁: 제목(#, 1., 1.1)과 항목(-, •)으로 구조화하면 더 정확합니다."></textarea>
+
+      <div class="options">
+        <label class="opt"><input type="checkbox" id="opt-negative" checked /> 예외 케이스 포함</label>
+        <label class="opt"><input type="checkbox" id="opt-boundary" checked /> 경계 케이스 포함</label>
+        <label class="opt opt-prefix">ID 접두사 <input type="text" id="opt-prefix" value="TC" maxlength="8" /></label>
+      </div>
+
+      <button id="btn-generate" class="btn btn-primary btn-lg" type="button">🚀 테스트 케이스 변환</button>
+      <p class="hint">단축키: Ctrl(⌘) + Enter</p>
+    </section>
+
+    <!-- 결과 패널 -->
+    <section id="result-section" class="panel result-panel" aria-label="생성 결과">
+      <div class="panel-head">
+        <h2>2. 생성 결과</h2>
+        <div class="result-actions">
+          <button id="btn-copy" class="btn btn-ghost btn-sm" type="button" disabled>📋 복사</button>
+          <button id="btn-csv" class="btn btn-ghost btn-sm" type="button" disabled>⬇ CSV</button>
+          <button id="btn-md" class="btn btn-ghost btn-sm" type="button" disabled>⬇ Markdown</button>
+          <button id="btn-clear-result" class="btn btn-ghost btn-sm" type="button" disabled>비우기</button>
+        </div>
+      </div>
+
+      <div id="result-meta" class="result-meta" style="display:none;">
+        <span class="meta-item">총 <strong id="stat-total">0</strong></span>
+        <span class="meta-item dot-normal">정상 <strong id="stat-normal">0</strong></span>
+        <span class="meta-item dot-exception">예외 <strong id="stat-exception">0</strong></span>
+        <span class="meta-item dot-boundary">경계 <strong id="stat-boundary">0</strong></span>
+      </div>
+
+      <div class="table-wrap">
+        <table class="tc-table">
+          <thead>
+            <tr>
+              <th>TC ID</th>
+              <th>대분류</th>
+              <th>중분류</th>
+              <th>시나리오</th>
+              <th>사전조건</th>
+              <th>테스트 단계</th>
+              <th>기대결과</th>
+              <th>우선순위</th>
+              <th>유형</th>
+            </tr>
+          </thead>
+          <tbody id="tc-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- 사용법 -->
+  <section id="how" class="how container">
+    <h2>사용법 3단계</h2>
+    <div class="how-grid">
+      <div class="how-card">
+        <div class="how-num">1</div>
+        <h3>기획서 붙여넣기</h3>
+        <p>기능 정의가 담긴 기획서 텍스트를 입력합니다. 제목과 항목으로 구조화할수록 결과가 정확합니다.</p>
+      </div>
+      <div class="how-card">
+        <div class="how-num">2</div>
+        <h3>변환 실행</h3>
+        <p>버튼을 누르면 주요 기능(로그인·결제·검색·업로드 등)을 인식해 정상/예외/경계 케이스를 자동 구성합니다.</p>
+      </div>
+      <div class="how-card">
+        <div class="how-num">3</div>
+        <h3>검토 후 내보내기</h3>
+        <p>표를 검토·보완한 뒤 CSV(엑셀) 또는 Markdown으로 내보내 TC 문서에 바로 활용합니다.</p>
+      </div>
+    </div>
+    <p class="how-note">
+      ※ 자동 생성 결과는 <strong>초안</strong>입니다. 실제 적용 전 QA 담당자의 검토·보완을 권장합니다.
+    </p>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>QA PRD → TC · 정적 페이지로 동작하는 오픈 도구 · 입력 데이터는 서버로 전송되지 않습니다.</p>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="assets/js/samples.js"></script>
+  <script src="assets/js/generator.js"></script>
+  <script src="assets/js/export.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
