@@ -84,9 +84,11 @@ a:hover { text-decoration: underline; }
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
 .btn-icon { gap: 0; }
 .chip { display: inline-flex; align-items: center; gap: 7px; }
-.ai-toggle-label { display: inline-flex; align-items: center; gap: 7px; }
-.ai-note .ico { vertical-align: -0.18em; }
 .chip .ico { color: var(--primary); }
+/* 인라인 텍스트 안의 아이콘(줄바꿈 시 줄 밀림 방지) */
+.ai-toggle-label .ico,
+.ai-note .ico { vertical-align: -0.18em; margin-right: 5px; }
+.ai-toggle-label .ico { color: var(--primary); }
 .ico-spin { animation: ico-spin 0.7s linear infinite; transform-origin: center; }
 @keyframes ico-spin { to { transform: rotate(360deg); } }
 
