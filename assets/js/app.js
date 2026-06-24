@@ -8,6 +8,32 @@
 
   var state = { cases: [] };
 
+  // ── 인라인 라인 아이콘(이모지 대체) ─────────────────────
+  function svg(paths, cls) {
+    return (
+      '<svg class="ico' +
+      (cls ? " " + cls : "") +
+      '" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+      'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      paths +
+      "</svg>"
+    );
+  }
+  var ICON = {
+    sparkles:
+      '<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/>',
+    wand:
+      '<path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/>',
+    spinner: '<path d="M21 12a9 9 0 1 1-6.219-8.56"/>',
+    check:
+      '<path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/>',
+    alert:
+      '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+    sun:
+      '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>',
+    moon: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>'
+  };
+
   // 유형별 배지 색상 클래스
   function typeClass(type) {
     if (type === "예외") return "badge-exception";
@@ -143,7 +169,7 @@
   function setGenerating(on) {
     var btn = $("#btn-generate");
     btn.disabled = on;
-    if (on) btn.textContent = "🤖 AI 생성 중...";
+    if (on) btn.innerHTML = svg(ICON.spinner, "ico-spin") + "AI 생성 중...";
     else syncGenerateLabel();
   }
 
@@ -164,7 +190,7 @@
     window.TCAI.generate(text, key, getOptions()).then(
       function (res) {
         setGenerating(false);
-        showResult(res.cases, "🤖 AI · ");
+        showResult(res.cases, "AI · ");
         if (res.truncated) {
           toast("결과가 길어 일부가 잘렸을 수 있습니다. 기획서를 나눠 시도해 보세요.");
         }
@@ -177,9 +203,9 @@
   }
 
   function syncGenerateLabel() {
-    $("#btn-generate").textContent = $("#opt-ai").checked
-      ? "🤖 AI로 테스트 케이스 변환"
-      : "🚀 테스트 케이스 변환";
+    $("#btn-generate").innerHTML = $("#opt-ai").checked
+      ? svg(ICON.sparkles) + "AI로 테스트 케이스 변환"
+      : svg(ICON.wand) + "테스트 케이스 변환";
   }
 
   function toggleAiPanel() {
@@ -259,7 +285,7 @@
     var status = $("#file-status");
     status.style.display = "block";
     status.className = "file-status loading";
-    status.textContent = "⏳ 파일에서 내용을 추출하는 중...";
+    status.innerHTML = svg(ICON.spinner, "ico-spin") + "파일에서 내용을 추출하는 중...";
 
     window.TCFileParser.parseFiles(fileList).then(function (res) {
       var okList = res.results.filter(function (r) {
@@ -274,14 +300,22 @@
         $("#input-prd").value = cur ? cur + "\n\n" + res.text : res.text;
       }
 
-      var msg = "✅ " + okList.length + "개 파일 추출 완료";
+      var msg;
       if (failList.length) {
-        msg += " · ⚠️ 실패 " + failList.length + "개 (" + failList[0].error + ")";
+        msg =
+          svg(ICON.alert) +
+          okList.length +
+          "개 파일 추출 완료 · 실패 " +
+          failList.length +
+          "개 (" +
+          esc(failList[0].error) +
+          ")";
         status.className = "file-status warn";
       } else {
+        msg = svg(ICON.check) + okList.length + "개 파일 추출 완료";
         status.className = "file-status done";
       }
-      status.textContent = msg;
+      status.innerHTML = msg;
 
       if (res.text) {
         toast("파일에서 내용을 불러왔습니다. 자동으로 변환합니다.");
@@ -291,7 +325,7 @@
       }
     }, function (err) {
       status.className = "file-status warn";
-      status.textContent = "⚠️ 파일 처리 실패: " + ((err && err.message) || err);
+      status.innerHTML = svg(ICON.alert) + "파일 처리 실패: " + esc((err && err.message) || err);
     });
   }
 
@@ -350,7 +384,13 @@
   }
   function applyThemeIcon() {
     var btn = $("#theme-toggle");
-    if (btn) btn.textContent = getTheme() === "dark" ? "☀️" : "🌙";
+    if (!btn) return;
+    var icon = btn.querySelector(".theme-icon") || btn;
+    var dark = getTheme() === "dark";
+    // 다크 모드일 땐 해(밝게 전환), 라이트 모드일 땐 달(어둡게 전환)
+    icon.innerHTML = svg(dark ? ICON.sun : ICON.moon, "theme-svg");
+    btn.setAttribute("aria-label", dark ? "라이트 모드로 전환" : "다크 모드로 전환");
+    btn.setAttribute("title", dark ? "라이트 모드로 전환" : "다크 모드로 전환");
   }
   function toggleTheme() {
     var next = getTheme() === "dark" ? "light" : "dark";

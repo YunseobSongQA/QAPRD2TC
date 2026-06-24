@@ -10,9 +10,9 @@
   --border: #e3e8f0;
   --text: #1f2733;
   --text-soft: #5b6675;
-  --primary: #3b5bdb;
-  --primary-dark: #2f49b0;
-  --primary-soft: #edf1ff;
+  --primary: #4f6ef7;
+  --primary-dark: #3d5ce0;
+  --primary-soft: #eef0fe;
   --normal: #2f9e44;
   --exception: #e8590c;
   --boundary: #9c36b5;
@@ -34,9 +34,9 @@
   --border: #2a3645;
   --text: #e7ecf3;
   --text-soft: #9aa7b8;
-  --primary: #6b8cff;
-  --primary-dark: #5878f0;
-  --primary-soft: #1c2740;
+  --primary: #6e8bff;
+  --primary-dark: #8099ff;
+  --primary-soft: #1a1e31;
   --normal: #51cf66;
   --exception: #ff922b;
   --boundary: #cc5de8;
@@ -71,6 +71,24 @@ h1, h2, h3 { line-height: 1.3; margin: 0; }
 
 a { color: var(--primary); text-decoration: none; }
 a:hover { text-decoration: underline; }
+
+/* ── 인라인 라인 아이콘(이모지 대체) ─────── */
+.ico {
+  width: 1.05em;
+  height: 1.05em;
+  display: inline-block;
+  vertical-align: -0.16em;
+  flex-shrink: 0;
+  stroke-width: 2;
+}
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
+.btn-icon { gap: 0; }
+.chip { display: inline-flex; align-items: center; gap: 7px; }
+.ai-toggle-label { display: inline-flex; align-items: center; gap: 7px; }
+.ai-note .ico { vertical-align: -0.18em; }
+.chip .ico { color: var(--primary); }
+.ico-spin { animation: ico-spin 0.7s linear infinite; transform-origin: center; }
+@keyframes ico-spin { to { transform: rotate(360deg); } }
 
 /* ── 헤더 ───────────────────────────── */
 .site-header {
@@ -178,7 +196,8 @@ a:hover { text-decoration: underline; }
   background: var(--primary-soft);
   transform: scale(1.01);
 }
-.dropzone-icon { font-size: 28px; display: block; margin-bottom: 6px; }
+.dropzone-icon { display: block; margin-bottom: 8px; color: var(--primary); }
+.dropzone-icon svg { width: 30px; height: 30px; }
 .dropzone-title { margin: 0; font-weight: 700; font-size: 15px; color: var(--text); }
 .dropzone-sub { margin: 4px 0 0; font-size: 12.5px; color: var(--text-soft); }
 .file-status {
@@ -355,7 +374,8 @@ a:hover { text-decoration: underline; }
   color: var(--text-soft);
 }
 .result-empty[hidden] { display: none; }
-.result-empty-icon { font-size: 32px; line-height: 1; }
+.result-empty-icon { display: inline-flex; line-height: 1; color: var(--text-soft); opacity: 0.7; }
+.result-empty-icon svg { width: 38px; height: 38px; }
 .result-empty-text { margin: 0; font-size: 14px; line-height: 1.6; }
 
 .badge { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; }
@@ -438,21 +458,22 @@ a:hover { text-decoration: underline; }
 .brand:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
 .header-actions { display: flex; align-items: center; gap: 16px; }
 .theme-toggle {
-  width: 38px; height: 38px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: var(--surface);
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: transparent;
   color: var(--text);
   cursor: pointer;
-  font-size: 17px;
   line-height: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.15s, border-color 0.15s, transform 0.05s;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
 }
-.theme-toggle:hover { border-color: var(--primary); background: var(--primary-soft); }
-.theme-toggle:active { transform: translateY(1px) scale(0.96); }
+.theme-toggle:hover { border-color: var(--primary); background: var(--primary-soft); transform: rotate(20deg); }
+.theme-toggle:active { transform: scale(0.94); }
+.theme-icon { display: inline-flex; align-items: center; justify-content: center; }
+.theme-icon svg { width: 18px; height: 18px; }
 
 /* 네비: 클릭 시 해당 섹션으로 + 활성 밑줄 */
 .site-nav a { position: relative; padding: 4px 2px; transition: color 0.15s; }
@@ -500,7 +521,8 @@ a:hover { text-decoration: underline; }
   .brand-sub { display: none; }
   .site-nav { gap: 13px; font-size: 13px; }
   .header-actions { gap: 10px; }
-  .theme-toggle { width: 34px; height: 34px; font-size: 15px; }
+  .theme-toggle { width: 36px; height: 36px; }
+  .theme-icon svg { width: 17px; height: 17px; }
   .hero { padding: 40px 0 28px; }
   .hero h1 { font-size: 23px; }
   .hero-desc { font-size: 15px; }

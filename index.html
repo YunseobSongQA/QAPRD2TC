@@ -6,7 +6,7 @@
   <title>QA PRD → TC | 기획서 테스트케이스 자동 생성기</title>
   <meta name="description" content="기획서(PRD)를 붙여넣으면 QA 테스트 케이스(TC)를 자동으로 생성하는 무료 웹 도구. 정적 페이지로 동작하며 CSV/Markdown 내보내기를 지원합니다." />
   <link rel="stylesheet" href="assets/css/styles.css" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect x='2' y='2' width='44' height='44' rx='13' fill='%233b5bdb'/><text x='24' y='33' text-anchor='middle' font-family='Segoe UI,system-ui,sans-serif' font-size='22' font-weight='700' fill='%23ffffff'>TC</text></svg>" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect x='2' y='2' width='44' height='44' rx='13' fill='%234f6ef7'/><text x='24' y='33' text-anchor='middle' font-family='Segoe UI,system-ui,sans-serif' font-size='22' font-weight='700' fill='%23ffffff'>TC</text></svg>" />
   <!-- 다크/일반 모드 초기 적용 (화면 깜빡임 방지) -->
   <script>
     (function () {
@@ -31,8 +31,8 @@
                   font-size="20" font-weight="800" letter-spacing="-0.5" fill="#ffffff">TC</text>
             <defs>
               <linearGradient id="tcLogoGrad" x1="2" y1="2" x2="46" y2="46" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#4364e8" />
-                <stop offset="1" stop-color="#2f49b0" />
+                <stop stop-color="#4f6ef7" />
+                <stop offset="1" stop-color="#3d5ce0" />
               </linearGradient>
             </defs>
           </svg>
@@ -48,7 +48,7 @@
           <a href="#how" data-nav="how">사용법</a>
           <a href="https://github.com/qass96/QAPRD2TC" target="_blank" rel="noopener">GitHub</a>
         </nav>
-        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="다크/일반 모드 전환" title="다크/일반 모드 전환">🌙</button>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="다크/일반 모드 전환" title="다크/일반 모드 전환"><span class="theme-icon" aria-hidden="true"></span></button>
       </div>
     </div>
   </header>
@@ -63,9 +63,9 @@
         설치·로그인 없이 브라우저에서 바로 동작합니다.
       </p>
       <div class="hero-badges">
-        <span class="chip">⚡ 즉시 동작 (정적 페이지)</span>
-        <span class="chip">📄 CSV · Markdown 내보내기</span>
-        <span class="chip">🔒 데이터는 브라우저 밖으로 나가지 않음</span>
+        <span class="chip"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>즉시 동작 (정적 페이지)</span>
+        <span class="chip"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>CSV · Markdown 내보내기</span>
+        <span class="chip"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>데이터는 브라우저 밖으로 나가지 않음</span>
       </div>
     </div>
   </section>
@@ -85,7 +85,7 @@
         <input type="file" id="file-input" class="file-input"
                accept=".pptx,.docx,.xlsx,.xls,.csv,.txt,.md" multiple hidden />
         <div class="dropzone-inner">
-          <span class="dropzone-icon">📎</span>
+          <span class="dropzone-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg></span>
           <p class="dropzone-title">기획서 파일을 여기로 끌어다 놓으세요</p>
           <p class="dropzone-sub">PPT(.pptx) · 워드(.docx) · 엑셀(.xlsx/.xls) · CSV · 텍스트 지원 — 또는 클릭해서 선택</p>
         </div>
@@ -112,23 +112,23 @@
       <div class="ai-box">
         <label class="ai-toggle">
           <input type="checkbox" id="opt-ai" />
-          <span class="ai-toggle-label">🤖 AI 모드 <small>(Claude로 더 정교하게 — 본인 API 키 필요)</small></span>
+          <span class="ai-toggle-label"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg>AI 모드 <small>(Claude로 더 정교하게 — 본인 API 키 필요)</small></span>
         </label>
         <div id="ai-panel" class="ai-panel" hidden>
           <div class="ai-key-row">
             <input type="password" id="ai-key" class="ai-key-input" autocomplete="off"
                    placeholder="Anthropic API 키 (sk-ant-...)" />
-            <button id="ai-key-clear" class="btn btn-ghost btn-sm" type="button" title="키 지우기">✕</button>
+            <button id="ai-key-clear" class="btn btn-ghost btn-sm btn-icon" type="button" title="키 지우기" aria-label="키 지우기"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
           </div>
           <label class="opt ai-remember"><input type="checkbox" id="ai-remember" /> 이 세션 동안 키 기억(브라우저 sessionStorage)</label>
           <p class="ai-note">
-            🔒 키는 <strong>이 브라우저에서 Anthropic(api.anthropic.com)으로만</strong> 전송되며 별도 서버에 저장되지 않습니다.
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> 키는 <strong>이 브라우저에서 Anthropic(api.anthropic.com)으로만</strong> 전송되며 별도 서버에 저장되지 않습니다.
             키 발급: <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">console.anthropic.com</a>
           </p>
         </div>
       </div>
 
-      <button id="btn-generate" class="btn btn-primary btn-lg" type="button">🚀 테스트 케이스 변환</button>
+      <button id="btn-generate" class="btn btn-primary btn-lg" type="button"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg>테스트 케이스 변환</button>
       <p class="hint">단축키: Ctrl(⌘) + Enter</p>
     </section>
 
@@ -137,10 +137,10 @@
       <div class="panel-head">
         <h2>2. 생성 결과</h2>
         <div class="result-actions">
-          <button id="btn-xlsx" class="btn btn-success btn-sm" type="button" disabled>⬇ 엑셀(xlsx)</button>
-          <button id="btn-csv" class="btn btn-ghost btn-sm" type="button" disabled>⬇ CSV</button>
-          <button id="btn-md" class="btn btn-ghost btn-sm" type="button" disabled>⬇ Markdown</button>
-          <button id="btn-copy" class="btn btn-ghost btn-sm" type="button" disabled>📋 복사</button>
+          <button id="btn-xlsx" class="btn btn-success btn-sm" type="button" disabled><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>엑셀(xlsx)</button>
+          <button id="btn-csv" class="btn btn-ghost btn-sm" type="button" disabled><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>CSV</button>
+          <button id="btn-md" class="btn btn-ghost btn-sm" type="button" disabled><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>Markdown</button>
+          <button id="btn-copy" class="btn btn-ghost btn-sm" type="button" disabled><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>복사</button>
           <button id="btn-clear-result" class="btn btn-ghost btn-sm" type="button" disabled>비우기</button>
         </div>
       </div>
@@ -154,10 +154,10 @@
 
       <!-- 생성 전 기본 안내 (표와 분리해 겹침 방지) -->
       <div id="result-empty" class="result-empty">
-        <span class="result-empty-icon" aria-hidden="true">🧪</span>
+        <span class="result-empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"/><path d="M6.453 15h11.094"/><path d="M8.5 2h7"/></svg></span>
         <p class="result-empty-text">
           아직 생성된 테스트 케이스가 없습니다.<br />
-          왼쪽에 기획서를 입력하고 <strong>🚀 테스트 케이스 변환</strong> 버튼을 눌러보세요.
+          왼쪽에 기획서를 입력하고 <strong>테스트 케이스 변환</strong> 버튼을 눌러보세요.
         </p>
       </div>
 
